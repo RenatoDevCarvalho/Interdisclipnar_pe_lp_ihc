@@ -1,6 +1,10 @@
-if (!require("tidyverse")) install.packages("tidyverse")
-if (!require("gt")) install.packages("gt")
-if (!require("ggplot2")) install.packages("ggplot2")
+list.of.packages <- c("tidyverse","ggplot2", "gt")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+
+library("tidyverse")
+library("ggplot2")
+library("gt")
 
 materias = c("Ciencias da Natureza", "Ciencias Humanas", "Linguagens e Codigos", "Matematica", "Redacao")
 
@@ -69,8 +73,9 @@ correlacao = as.list(strsplit(correlacao, " ")[[1]])
 
 medias = enem %>%
   filter(NU_ANO == 2015 & CO_UF_ESCOLA == strtoi(escolhaEstado)) %>%
-  select(materias[strtoi(correlacao)])
+  select(materias[strtoi(correlacao)]) %>%
+  mutate(a = 0, b = 0, c = 0)
 
-fit = lm(pull(medias[1]) ~ pull(medias[2:length(medias)]), data = medias)
+fit = lm(pull(medias[1]) ~ pull(medias[2]) + pull(medias[3]) + pull(medias[4]) + pull(medias[5]), data = medias)
 
-print(fit)
+print(fit$coefficients)
