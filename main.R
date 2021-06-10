@@ -1,34 +1,34 @@
-library(tidyverse)
-library(gt)
-library(ggplot2)
+if (!require("tidyverse")) install.packages("tidyverse")
+if (!require("gt")) install.packages("gt")
+if (!require("ggplot2")) install.packages("ggplot2")
 
-materias = c("Ciências da Natureza", "Ciências Humanas", "Linguagens e Códigos", "Matemática", "Redação")
+materias = c("Ciencias da Natureza", "Ciencias Humanas", "Linguagens e Codigos", "Matematica", "Redacao")
 
 enem = read.csv("dadosEnem.csv", TRUE, ";")
 
 enem = as_tibble(enem) %>%
-  rename("Ciências da Natureza" = NU_MEDIA_CN, 
-         "Ciências Humanas" = NU_MEDIA_CH,
-         "Linguagens e Códigos" = NU_MEDIA_LP,
-         "Matemática" = NU_MEDIA_MT,
-         "Redação" = NU_MEDIA_RED,)
+  rename("Ciencias da Natureza" = NU_MEDIA_CN, 
+         "Ciencias Humanas" = NU_MEDIA_CH,
+         "Linguagens e Codigos" = NU_MEDIA_LP,
+         "Matematica" = NU_MEDIA_MT,
+         "Redacao" = NU_MEDIA_RED,)
 
 estados = enem %>%
   distinct(CO_UF_ESCOLA, SG_UF_ESCOLA) %>%
   arrange(SG_UF_ESCOLA) %>%
-  rename(Estados = SG_UF_ESCOLA)
+  rename(Estados = SG_UF_ESCOLA, Cod. = CO_UF_ESCOLA)
 
 print(gt(estados))
 
 escolhaEstado = readline(prompt = "Escolha o estado: ")
 
-print("1 - Ciências da Natureza")
-print("2 - Ciências Humanas")
-print("3 - Linguagens e Códigos")
-print("4 - Matemática")
-print("5 - Redação")
+print("1 - Ciencias da Natureza")
+print("2 - Ciencias Humanas")
+print("3 - Linguagens e Codigos")
+print("4 - Matematica")
+print("5 - Redacao")
 
-correlacao = readline(prompt = "Escolha as variaveis para correlação: ")
+correlacao = readline(prompt = "Escolha as variaveis para correlacao: ")
 
 correlacao = as.list(strsplit(correlacao, " ")[[1]])
 
@@ -46,22 +46,22 @@ for (i in seq(1, length(correlacao), by = 2)) {
       geom_smooth(method = "lm", col = "red") +
       theme_classic() +
       labs(
-        title = paste("Média em", materias[strtoi(correlacao[i])] , "X Média em", materias[strtoi(correlacao[i+1])]),
+        title = paste("Media em", materias[strtoi(correlacao[i])] , "X Media em", materias[strtoi(correlacao[i+1])]),
         x = materias[i],
         y = materias[i+1]
       )
   )
   
-  print(paste("Correlação entre", materias[strtoi(correlacao[i])], "e", materias[strtoi(correlacao[i+1])], ":", cor(medias$x, medias$y, method = "pearson")))
+  print(paste("correlacao entre", materias[strtoi(correlacao[i])], "e", materias[strtoi(correlacao[i+1])], ":", cor(medias$x, medias$y, method = "pearson")))
   
-  readline(prompt = "Próxima correlação(Enter)")
+  readline(prompt = "Continuar(Enter)")
 }
 
-print("1 - Ciências da Natureza")
-print("2 - Ciências Humanas")
-print("3 - Linguagens e Códigos")
-print("4 - Matemática")
-print("5 - Redação")
+print("1 - Ciencias da Natureza")
+print("2 - Ciencias Humanas")
+print("3 - Linguagens e Codigos")
+print("4 - Matematica")
+print("5 - Redacao")
 
 correlacao = readline(prompt = "Escolha a variavel resposta e as variaveis independentes: ")
 
@@ -72,3 +72,5 @@ medias = enem %>%
   select(materias[strtoi(correlacao)])
 
 fit = lm(pull(medias[1]) ~ pull(medias[2:length(medias)]), data = medias)
+
+print(fit)
